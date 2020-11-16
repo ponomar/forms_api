@@ -56,10 +56,10 @@ class SelectField(Field):
 
     def _value_is_valid(self):
         keys = [k_ for k_, v_, s_ in self.options]
-        return not keys or self.value in keys
+        return not keys or self.value is None or self.value in keys
 
     def validate(self, form) -> bool:
-        if self.value is None and self.required:
+        if self.value == self.value_empty and self.required:
             self.error = self.get_required_error()
             return False
 
