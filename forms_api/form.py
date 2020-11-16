@@ -50,7 +50,10 @@ class Form(object):
 
     def set_formdata(self, formdata):
         for field in self.fields:
-            field.set_value(formdata.get(field.key))
+            if isinstance(field.value_empty, list):
+                field.set_value(formdata.getlist(field.key))
+            else:
+                field.set_value(formdata.get(field.key))
 
     def set_object_data(self):
         for field in self.fields:
