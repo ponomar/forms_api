@@ -54,13 +54,16 @@ class SelectField(Field):
             selected = self.fld_coerce(key) == self.value
             yield [self.fld_coerce(key), label, selected]
 
+    def _value_is_valid(self):
+        keys = [k_ for k_, v_, s_ in self.options]
+        return not keys or self.value in keys
+
     def validate(self, form) -> bool:
         if self.value is None and self.required:
             self.error = self.get_required_error()
             return False
 
-        keys = [k_ for k_, v_, s_ in self.options]
-        if keys and self.value is not None and self.value not in keys:
+        if not self._value_is_valid():
             self.error = (
                 self.error_not_in_options()
                 if callable(self.error_not_in_options)

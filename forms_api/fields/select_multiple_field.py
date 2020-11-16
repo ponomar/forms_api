@@ -1,6 +1,6 @@
 from typing import Generator, Union
 
-from forms_api.fields.base_field import Field, null
+from forms_api.fields.base_field import null
 from forms_api.fields.select_field import SelectField
 from forms_api.html import generate_select
 
@@ -36,7 +36,6 @@ class SelectMultipleField(SelectField):
             return self.value_empty
 
         result = [self.fld_coerce(i) for i in result]
-
         return [self.apply_filters(i) for i in result]
 
     @property
@@ -45,13 +44,9 @@ class SelectMultipleField(SelectField):
             selected = self.fld_coerce(key) in self.value
             yield [self.fld_coerce(key), label, selected]
 
-    def validate(self, form) -> bool:
+    def _value_is_valid(self):
         keys = {k_ for k_, v_, s_ in self.options}
-        if keys and not set(self.value).issuperset(keys):
-            self.error = self.error_not_in_options
-            return False
-
-        return super().validate(form)
+        return not keys or set(self.value).issubset(keys)
 
     def html(self, **attributes) -> str:
         return generate_select(
